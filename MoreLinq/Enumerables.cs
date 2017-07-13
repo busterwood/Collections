@@ -103,4 +103,6 @@ namespace BusterWood.MoreLinq
             => items.Select(chooser).Where(res => res.HasValue).Select(res => res.Value);
 
     }
+
+    
 }
