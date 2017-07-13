@@ -35,10 +35,9 @@
   <ItemGroup>
     <Compile Include="Collections\ArraySet.cs" />
     <Compile Include="Collections\BinarySet.cs" />
-    <Compile Include="Collections\DistinctList.cs" />
     <Compile Include="Collections\EmptySet.cs" />
     <Compile Include="Collections\IReadOnlySet.cs" />
-    <Compile Include="Collections\OHashSet.cs" />
+    <Compile Include="Collections\UniqueList.cs" />
     <Compile Include="Enumerables.cs" />
     <Compile Include="EnumExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

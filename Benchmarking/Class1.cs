@@ -13,28 +13,20 @@ namespace Benchmarking
     {
         public static void Main(string[] args)
         {
-            BenchmarkRunner.Run<Lists>();
+            BenchmarkRunner.Run<IntLists>();
+            //BenchmarkRunner.Run<StringLists>();
         }
     }
 
-    public class Lists
+    public class IntLists
     {
-        [Params(10, 30, 60, 100)]
+        [Params(10, 50, 500, 5000)]
         public int Size { get; set; }
 
         [Benchmark]
-        public DistinctList<int> Distinct()
+        public UniqueList<int> UniqueList()
         {
-            var l = new DistinctList<int>();
-            for (int i = 0; i < Size; i++)
-                l.Add(i);
-            return l;
-        }
-
-        [Benchmark]
-        public OHashSet<int> OHashSet()
-        {
-            var l = new OHashSet<int>();
+            var l = new UniqueList<int>();
             for (int i = 0; i < Size; i++)
                 l.Add(i);
             return l;
@@ -49,12 +41,45 @@ namespace Benchmarking
             return l;
         }
 
-        //[Benchmark]
+        [Benchmark]
         public HashSet<int> HashSet()
         {
             var l = new HashSet<int>();
             for (int i = 0; i < Size; i++)
                 l.Add(i);
+            return l;
+        }
+    }
+
+    public class StringLists
+    {
+        [Params(10, 50, 500, 5000)]
+        public int Size { get; set; }
+
+        [Benchmark]
+        public UniqueList<string> UniqueList()
+        {
+            var l = new UniqueList<string>();
+            for (int i = 0; i < Size; i++)
+                l.Add(i + "abv");
+            return l;
+        }
+
+        [Benchmark]
+        public List<string> ArrayList()
+        {
+            var l = new List<string>();
+            for (int i = 0; i < Size; i++)
+                l.Add(i + "abv");
+            return l;
+        }
+
+        [Benchmark]
+        public HashSet<string> HashSet()
+        {
+            var l = new HashSet<string>();
+            for (int i = 0; i < Size; i++)
+                l.Add(i + "abv");
             return l;
         }
     }
