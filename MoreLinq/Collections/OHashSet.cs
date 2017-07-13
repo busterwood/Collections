@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace BusterWood.Collections
 {
-    public class OHashSet<T>
+    public class OHashSet<T> : IReadOnlyList<T>
     {
         int[] indexes;
         T[] values;
@@ -14,8 +15,8 @@ namespace BusterWood.Collections
 
         public OHashSet(IEqualityComparer<T> equality = null)
         {
-            indexes = new int[3];
-            values = new T[3];
+            indexes = new int[4];
+            values = new T[4];
             count = 0;
             Equality = equality ?? EqualityComparer<T>.Default;
         }
@@ -23,6 +24,16 @@ namespace BusterWood.Collections
         public IEqualityComparer<T> Equality { get; }
 
         public int Count => count;
+
+        public T this[int index]
+        {
+            get
+            {
+                if (index < 0 || index >= count)
+                    throw new IndexOutOfRangeException();
+                return values[index];
+            }
+        }
 
         public bool Add(T item)
         {
@@ -43,9 +54,10 @@ namespace BusterWood.Collections
                 {
                     return false; // item already there
                 }
-                
+
                 // another value is in that slot, try the next index
-                if (++slot == indexes.Length)
+                slot += 1;
+                if (slot == indexes.Length)
                     slot = 0;
 
                 // searched all possible entries and returned back to original slot, must be full, so resize
@@ -93,5 +105,44 @@ namespace BusterWood.Collections
                 }
             }
         }
+
+        public bool Contains(T item) => IndexOf(item) >= 0;
+
+        public int IndexOf(T item)
+        {
+            var hc = item.GetHashCode();
+            var firstSlot = hc % indexes.Length;
+            int slot = firstSlot;
+            for (;;)
+            {
+                int valueIdx = indexes[slot] - 1; // default value is 0, so always store one more than a real index
+                if (valueIdx < 0)
+                    return -1;  // not found
+
+                if (Equality.Equals(item, values[valueIdx]))
+                    return valueIdx; // found
+
+                // another value is in that slot, try the next index
+                slot += 1;
+                if (slot == indexes.Length)
+                    slot = 0;
+
+                // searched all possible entries and returned back to original slot, must be full
+                if (slot == firstSlot)
+                    return -1;
+            }
+        }
+
+        public IEnumerator<T> GetEnumerator()
+        {
+            int i = 0;
+            foreach (var v in values)
+            {
+                if (i++ > count) yield break;
+                yield return v;
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
     }
 }
