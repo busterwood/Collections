@@ -1,5 +1,6 @@
 ﻿using BusterWood.Collections;
 using NUnit.Framework;
+using System;
 using System.Linq;
 
 namespace UnitTests
@@ -162,5 +163,37 @@ namespace UnitTests
         }
 
 
+        [Test]
+        public void can_set_value_by_index()
+        {
+            var set = new UniqueList<int> { 1, 2, 3 };
+            set[0] = 10;
+
+            Assert.AreEqual(3, set.Count, "count");
+            Assert.AreEqual(0, set.IndexOf(10), "set.IndexOf(10)");
+            Assert.AreEqual(1, set.IndexOf(2), "set.IndexOf(2)");
+            Assert.AreEqual(2, set.IndexOf(3), "set.IndexOf(3)");
+        }
+
+        [Test]
+        public void can_set_value_by_index_to_itself()
+        {
+            var set = new UniqueList<int> { 1, 2, 3 };
+            Assert.AreEqual(3, set.Count, "count");
+            set[0] = 1;
+
+            Assert.AreEqual(3, set.Count, "count");
+            Assert.AreEqual(0, set.IndexOf(1), "set.IndexOf(1)");
+            Assert.AreEqual(1, set.IndexOf(2), "set.IndexOf(2)");
+            Assert.AreEqual(2, set.IndexOf(3), "set.IndexOf(3)");
+        }
+
+        [Test]
+        public void cannot_set_value_by_index_if_value_in_another_location_in_the_list()
+        {
+            var set = new UniqueList<int> { 1, 2, 3 };
+            Assert.AreEqual(3, set.Count, "count");
+            Assert.Throws<ArgumentException>(() => set[0] = 3);
+        }
     }
 }

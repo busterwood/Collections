@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
@@ -32,6 +33,7 @@ namespace BusterWood.Collections
         public IEqualityComparer<T> Equality { get; }
 
         public int Capacity => values.Length;
+
         public int Count => count;
 
         public bool IsReadOnly => false;
@@ -46,8 +48,34 @@ namespace BusterWood.Collections
             }
             set
             {
-                //TODO: remove and add with value and hashcode slot reuses
-                throw new NotImplementedException();
+                if (index < 0 || index >= count)
+                    throw new IndexOutOfRangeException();
+                if (value == null)
+                    throw new ArgumentNullException();
+
+                var oldItem = values[index];
+                var oldHC = PositiveHashCode(oldItem);
+                var oldResult = FindSlot(oldItem, oldHC);
+                Debug.Assert(oldResult.Found);
+                var newHC = PositiveHashCode(value);
+                var newResult = FindSlot(value, newHC);
+
+                if (newResult.Found)
+                {
+                    // maybe setting will result in a duplicate
+                    if (newResult.Slot != oldResult.Slot)
+                        throw new ArgumentException($"Cannot set index {index} as this would result in a duplicate value");
+                    values[index] = value;
+                    hashCodes[index] = newHC;
+                }
+                else
+                {
+                    // no duplicate
+                    SetIndex(oldResult.Slot, DELETED);
+                    SetIndex(newResult.FirstFreeSlot, index);
+                    values[index] = value;
+                    hashCodes[index] = newHC;
+                }
             }
         }
 
