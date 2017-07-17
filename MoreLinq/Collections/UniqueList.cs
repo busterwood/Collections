@@ -319,13 +319,13 @@ namespace BusterWood.Collections
         public bool Remove(T item)
         {
             var hc = PositiveHashCode(item);
-            var found = FindSlot(item, hc);
-            if (!found.Found)
+            var res = FindSlot(item, hc);
+            if (!res.Found)
                 return false; // item not found in dictionary
 
             // it was found in index[slot]
-            var idx = GetIndex(found.Slot);
-            SetIndex(found.Slot, DELETED); // slot now free but mark it as deleted so probing will skip over it when finding values
+            var idx = GetIndex(res.Slot);
+            SetIndex(res.Slot, DELETED); // slot now free but mark it as deleted so probing will skip over it when finding values
 
             // shift values and hash codes down one, and clear last entry
             int newCount = count - 1;
