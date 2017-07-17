@@ -104,5 +104,63 @@ namespace UnitTests
             Assert.AreEqual(true, set.Add(4));
             Assert.AreEqual(false, set.Contains(3));
         }
+
+        [Test]
+        public void can_delete_item_that_exists()
+        {
+            var set = new UniqueList<int> { 1, 2, 3, 4 };
+            Assert.AreEqual(true, set.Remove(3));
+
+            Assert.AreEqual(0, set.IndexOf(1), "set.IndexOf(1)");
+            Assert.AreEqual(1, set.IndexOf(2), "set.IndexOf(2)");
+            Assert.AreEqual(2, set.IndexOf(4), "set.IndexOf(4)");
+            Assert.AreEqual(-1, set.IndexOf(3), "set.IndexOf(3)");
+            Assert.AreEqual(3, set.Count, "count");
+        }
+
+        [Test]
+        public void can_delete_last_item()
+        {
+            var set = new UniqueList<int> { 1, 2, 3, 4 };
+            Assert.AreEqual(true, set.Remove(4));
+
+            Assert.AreEqual(0, set.IndexOf(1), "set.IndexOf(1)");
+            Assert.AreEqual(1, set.IndexOf(2), "set.IndexOf(2)");
+            Assert.AreEqual(2, set.IndexOf(3), "set.IndexOf(3)");
+            Assert.AreEqual(-1, set.IndexOf(4), "set.IndexOf(4)");
+            Assert.AreEqual(3, set.Count, "count");
+        }
+
+        [Test]
+        public void can_add_same_value_after_deleting()
+        {
+            var set = new UniqueList<int> { 1, 2, 3, 4 };
+            Assert.AreEqual(true, set.Remove(4));
+            Assert.AreEqual(true, set.Add(4));
+
+            Assert.AreEqual(4, set.Count, "count");
+            Assert.AreEqual(0, set.IndexOf(1), "set.IndexOf(1)");
+            Assert.AreEqual(1, set.IndexOf(2), "set.IndexOf(2)");
+            Assert.AreEqual(2, set.IndexOf(3), "set.IndexOf(3)");
+            Assert.AreEqual(3, set.IndexOf(4), "set.IndexOf(4)");
+        }
+
+        [Test]
+        public void can_add_same_value_into_deleted_slot()
+        {
+            Assert.AreEqual(3.GetHashCode() % 7, 10.GetHashCode() % 7);
+
+            var set = new UniqueList<int> { 1, 2, 3, 4 };
+            Assert.AreEqual(true, set.Remove(3));
+            Assert.AreEqual(true, set.Add(10));
+
+            Assert.AreEqual(4, set.Count, "count");
+            Assert.AreEqual(0, set.IndexOf(1), "set.IndexOf(1)");
+            Assert.AreEqual(1, set.IndexOf(2), "set.IndexOf(2)");
+            Assert.AreEqual(2, set.IndexOf(4), "set.IndexOf(3)");
+            Assert.AreEqual(3, set.IndexOf(10), "set.IndexOf(10)");
+        }
+
+
     }
 }

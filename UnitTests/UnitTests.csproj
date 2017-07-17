@@ -40,8 +40,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="BinarySetTests.cs" />
-    <Compile Include="OHashSetTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="UniqueListTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
