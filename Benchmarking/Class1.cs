@@ -24,7 +24,7 @@ namespace Benchmarking
     //[InliningDiagnoser]
     public class IntLists
     {
-        [Params(5000)]
+        [Params(50, 500, 5000)]
         public int Size { get; set; }
 
         [Benchmark]
