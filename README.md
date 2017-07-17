@@ -10,8 +10,9 @@ More linq style extensions methods.
 
 `UniqueList` is a mixture of an array-list of values and a hash set, and implements both `IList<T>` and `ISet<T>`.
 
-`Add` performance is similar to a `HashSet<T>`
+The design of `UniqueList` was inspired by [Python 3.6's new dict ](https://mail.python.org/pipermail/python-dev/2012-December/123028.html) which uses hashcode to access an array of indexes into the values array of values.
 
+`Add` performance is similar to a `HashSet<T>`:
 ```
 BenchmarkDotNet=v0.10.8, OS=Windows 7 SP1 (6.1.7601)
 Processor=Intel Core i7-2600S CPU 2.80GHz (Sandy Bridge), ProcessorCount=8
@@ -38,11 +39,4 @@ Frequency=2728359 Hz, Resolution=366.5207 ns, Timer=TSC
 ### Ideas
 
 Null == empty set
-
 Value == set of one
-
-Set of N but preserving order:
-* tried array set with linear lookup - too slow
-* try [Python3-style ordered dictionary](https://mail.python.org/pipermail/python-dev/2012-December/123028.html), i.e use hashcode to access an array of indexes into array of values, values stored in order added so can be enumerated in sequnece.
-
-Why set of N? Avoid duplicates and nulls (safer, avoiding errors)
