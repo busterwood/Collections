@@ -11,8 +11,8 @@ namespace UnitTests
         public void can_add_unique_value()
         {
             var set = new UniqueList<int>();
-            Assert.AreEqual(true, set.Add(1));
-            Assert.AreEqual(1, set.Count);
+            Assert.AreEqual(true, set.Add(1), "set.Add(1)");
+            Assert.AreEqual(1, set.Count, "set.Count");
         }
 
         [Test]

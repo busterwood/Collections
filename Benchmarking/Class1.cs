@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using BenchmarkDotNet.Attributes;
 using BenchmarkDotNet.Running;
 using BusterWood.Collections;
+using BenchmarkDotNet.Diagnostics.Windows.Configs;
 
 namespace Benchmarking
 {
@@ -15,13 +16,15 @@ namespace Benchmarking
         {
             BenchmarkRunner.Run<IntLists>();
             //BenchmarkRunner.Run<StringLists>();
+            //BenchmarkRunner.Run<UniqueList<int>>();
         }
     }
 
     //[MemoryDiagnoser]
+    //[InliningDiagnoser]
     public class IntLists
     {
-        [Params(10, 50, 500, 5000)]
+        [Params(5000)]
         public int Size { get; set; }
 
         [Benchmark]

@@ -2,8 +2,8 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 
 namespace BusterWood.Collections
 {
@@ -56,117 +56,70 @@ namespace BusterWood.Collections
             Add(item);
         }
 
-        // inline the code from FindSlot to optimize performance
         public bool Add(T item)
         {
             if (item == null)
                 throw new ArgumentNullException();
 
+            if (NeedToResize())
+                Resize();
+
             var hc = PositiveHashCode(item);
-            var firstSlot = hc % indexes.Length;
-            int slot = firstSlot;
-            int reuseThis = DELETED;
-            for (;;)
+            //var res = FindSlot(item, hc);
+            // inline FindSlot for 25% better performance 
+            FindResult res;
             {
-                int valueIdx = indexes[slot] - 1; // default value is 0, so always store one more than a real index
-                if (valueIdx < 0)
+                const int UNSET = -1;
+                var slot = hc % indexes.Length;
+                int firstFree = UNSET;
+                for (;;)
                 {
-                    // not found, add it now
+                    int valueIdx = GetIndex(slot);
                     if (valueIdx == FREE)
-                        return Add(item, hc, reuseThis < 0 ? slot : reuseThis);
+                    {
+                        res = new FindResult(-1, firstFree == UNSET ? slot : firstFree);
+                        break;
+                    }
+                    else if (valueIdx == DELETED)
+                    {
+                        if (firstFree == UNSET)
+                            firstFree = slot;
+                    }
+                    else if (hc == hashCodes[valueIdx] && Equality.Equals(item, values[valueIdx]))
+                    {
+                        res = new FindResult(slot, firstFree);
+                        break;
+                    }
 
-                    // remember first slot we can reuse due to deletion
-                    if (reuseThis == DELETED)
-                        reuseThis = valueIdx;
-                }
-                else if (hc == hashCodes[valueIdx] && Equality.Equals(item, values[valueIdx]))
-                    // return if item already there
-                    return false;
+                    // another value is in that slot, try the next index
+                    slot += 1;
+                    if (slot == indexes.Length)
+                        slot = 0;
 
-                // another value is in that slot, try the next index
-                slot += 1;
-                if (slot == indexes.Length)
-                    slot = 0;
-
-                // searched all possible entries and returned back to original slot
-                if (slot == firstSlot)
-                {
-                    // we searched all entries and now can reuse the first DELETED slot we found
-                    if (reuseThis > DELETED)
-                        return Add(item, hc, reuseThis);
-
-                    // must be full, so resize
-                    Resize();
-                    slot = hc % indexes.Length;
+                    // wrap around termination check no longer needed because there will now always be spare capacity
                 }
             }
-        }
 
-        private bool Add(T item, int hc, int slot)
-        {
+            if (res.Found)
+                return false;
+
+            // not found, add it
             values[count] = item;
             hashCodes[count] = hc;
-            indexes[slot] = ++count; // add one on here, taken off above
+            SetIndex(res.FirstFreeSlot, count);
+            count++;
             return true;
         }
 
-        static int PositiveHashCode(T item) => item.GetHashCode() & Lower31BitMask;
-
-        int GetIndex(int slot) => indexes[slot] - 1; // default value is 0, so always store one more than a real index
-
-        void SetIndex(int slot, int idx) { indexes[slot] = idx + 1; }
-
-        FindResult FindSlot(T item, int hc)
-        {
-            const int UNSET = -1;
-            var firstSlot = hc % indexes.Length;
-            int slot = firstSlot;
-            int firstFree = UNSET;
-            for (;;)
-            {
-                int valueIdx = GetIndex(slot); 
-                if (valueIdx == FREE)
-                {
-                    return new FindResult(-1, firstFree);
-                }
-                else if (valueIdx == DELETED)
-                {
-                    if (firstFree == UNSET)
-                        firstFree = slot;
-                }
-                else if (hc == hashCodes[valueIdx] && Equality.Equals(item, values[valueIdx]))
-                    return new FindResult(slot, firstFree);
-
-                // another value is in that slot, try the next index
-                slot += 1;
-                if (slot == indexes.Length)
-                    slot = 0;
-
-                // searched all possible entries and returned back to original slot, must be full
-                if (slot == firstSlot)
-                    return new FindResult(-1, firstFree); // not found after searching all slots
-            }
-        }
-
-        struct FindResult
-        {
-            public readonly int Slot;
-            public readonly int FirstFreeSlot;
-            public bool Found => Slot >= 0;
-
-            public FindResult(int slot, int firstFree)
-            {
-                Slot = slot;
-                FirstFreeSlot = firstFree;
-            }
-        }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        bool NeedToResize() => count + 1 >= values.Length * 0.75f;
 
         void Resize()
         {
             int newSize = (indexes.Length * 2) + 1;
             Array.Resize(ref hashCodes, newSize);
             Array.Resize(ref values, newSize);
-            
+
             // recreate indexes from existing values and hashcodes
             indexes = new int[newSize];
             for (int i = 0; i < values.Length; i++)
@@ -199,9 +152,59 @@ namespace BusterWood.Collections
             }
         }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        static int PositiveHashCode(T item) => item.GetHashCode() & Lower31BitMask;
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        int GetIndex(int slot) => indexes[slot] - 1; // default value is 0, so always store one more than a real index
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        void SetIndex(int slot, int idx) { indexes[slot] = idx + 1; }
+
+        FindResult FindSlot(T item, int hc)
+        {
+            const int UNSET = -1;
+            var slot = hc % indexes.Length;
+            int firstFree = UNSET;
+            for (;;)
+            {
+                int valueIdx = GetIndex(slot); 
+                if (valueIdx == FREE)
+                {
+                    return new FindResult(-1, firstFree == UNSET ? slot : firstFree);
+                }
+                else if (valueIdx == DELETED)
+                {
+                    if (firstFree == UNSET)
+                        firstFree = slot;
+                }
+                else if (hc == hashCodes[valueIdx] && Equality.Equals(item, values[valueIdx]))
+                    return new FindResult(slot, firstFree);
+
+                // another value is in that slot, try the next index
+                slot += 1;
+                if (slot == indexes.Length)
+                    slot = 0;
+
+                // wrap around termination check no longer needed because there will now always be spare capacity
+            }
+        }
+
+        struct FindResult
+        {
+            public readonly int Slot;           // the slot the item was found in, or -1 if not found
+            public readonly int FirstFreeSlot; // the slot to add to 
+            public bool Found => Slot >= 0;
+
+            public FindResult(int slot, int firstFree)
+            {
+                Slot = slot;
+                FirstFreeSlot = firstFree;
+            }
+        }
+
         public bool Contains(T item)
         {
-            int slot;
             var hc = PositiveHashCode(item);
             var result = FindSlot(item, hc);
             return result.Found;
@@ -209,7 +212,6 @@ namespace BusterWood.Collections
 
         public int IndexOf(T item)
         {
-            int slot;
             var hc = PositiveHashCode(item);
             var result = FindSlot(item, hc);
             return result.Found ? GetIndex(result.Slot) : -1;
@@ -288,15 +290,14 @@ namespace BusterWood.Collections
 
         public bool Remove(T item)
         {
-            int slot;
             var hc = PositiveHashCode(item);
             var found = FindSlot(item, hc);
             if (!found.Found)
                 return false; // item not found in dictionary
 
             // it was found in index[slot]
-            var idx = indexes[found.Slot] - 1;
-            indexes[found.Slot] = DELETED + 1; // slot now free but mark it as deleted so probing will skip over it when finding values
+            var idx = GetIndex(found.Slot);
+            SetIndex(found.Slot, DELETED); // slot now free but mark it as deleted so probing will skip over it when finding values
 
             // shift values and hash codes down one, and clear last entry
             int newCount = count - 1;
