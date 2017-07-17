@@ -18,6 +18,7 @@ namespace Benchmarking
         }
     }
 
+    //[MemoryDiagnoser]
     public class IntLists
     {
         [Params(10, 50, 500, 5000)]

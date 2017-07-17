@@ -6,9 +6,28 @@ namespace BusterWood.MoreLinq
 {
     public static class Enumerables
     {
+        public static List<T> ToList<T>(this IEnumerable<T> source, Func<T, bool> predicate)
+        {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+            if (predicate == null)
+                throw new ArgumentNullException(nameof(predicate));
+
+            var lst = new List<T>();
+            foreach (var item in source)
+            {
+                if (predicate(item))
+                    lst.Add(item);
+            }
+            return lst;
+        }
+
         /// <summary>returns up to <paramref cref="count"/> values from the <paramref cref="source"/>, padding the result with <paramref cref="@default"/> values</summary>
         public static T[] ToArrayOf<T>(this IEnumerable<T> source, int count, T @default = default(T))
         {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
             // short cut if passed an array of the correct size
             var a = source as T[];
             if (a != null && a.Length == count)
@@ -28,6 +47,9 @@ namespace BusterWood.MoreLinq
         /// <summary>returns up to <paramref cref="count"/> values from the <paramref cref="source"/>, padding the result with <paramref cref="@default"/> values</summary>
         public static List<T> ToListOf<T>(this IEnumerable<T> source, int count, T @default = default(T))
         {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
             // short cut if passed an list of the correct size
             var lst = source as List<T>;
             if (lst != null && lst.Count == count)
@@ -41,10 +63,13 @@ namespace BusterWood.MoreLinq
             return result;
         }
 
-        public static IEnumerable<IEnumerable<T>> SplitOn<T>(this IEnumerable<T> items, Func<T, bool> predicate)
+        public static IEnumerable<IEnumerable<T>> SplitOn<T>(this IEnumerable<T> source, Func<T, bool> predicate)
         {
+            if (source == null)
+                throw new ArgumentNullException(nameof(source));
+
             var group = new List<T>();
-            foreach (var item in items)
+            foreach (var item in source)
             {
                 if (predicate(item) && group.Count > 0)
                 {
@@ -87,12 +112,12 @@ namespace BusterWood.MoreLinq
         }
 
         /// <summary>Returns the input items without the first one</summary>
-        public static IEnumerable<T> Head<T>(this IEnumerable<T> items, int count = 1) => items.Take(count);
+        public static IEnumerable<T> Head<T>(this IEnumerable<T> source, int count = 1) => source.Take(count);
 
         /// <summary>Returns the input items without the first one</summary>
-        public static IEnumerable<T> Rest<T>(this IEnumerable<T> items, int skip = 1) => items.Skip(skip);
+        public static IEnumerable<T> Rest<T>(this IEnumerable<T> source, int skip = 1) => source.Skip(skip);
 
-        public static IEnumerable<T> Repeat<T>(this IEnumerable<T> items, int times) => Enumerable.Repeat(items, times).SelectMany(x => x);
+        public static IEnumerable<T> Repeat<T>(this IEnumerable<T> source, int times) => Enumerable.Repeat(source, times).SelectMany(x => x);
 
         /// <summary>Returns results of the <paramref name="chooser"/> function that return a value (the functions result is not null)</summary>
         public static IEnumerable<TResult> Choose<T, TResult>(this IEnumerable<T> items, Func<T, TResult> chooser) where TResult : class

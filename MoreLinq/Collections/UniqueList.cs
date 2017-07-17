@@ -1,16 +1,19 @@
-﻿using System;
+﻿using BusterWood.MoreLinq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 
 namespace BusterWood.Collections
 {
     /// <summary>List of unique elements, which acts like a set in that you cannot add duplicates.</summary>
     /// <remarks>Performance is comparable to <see cref="HashSet{T}"/>.  Design was inspired by Python's 3.6 new dict</remarks>
-    public class UniqueList<T> : IReadOnlyList<T>
+    public class UniqueList<T> : IReadOnlyList<T>, ISet<T>, IReadOnlySet<T>, IList<T>
     {
         const int Lower31BitMask = 0x7FFFFFFF;
-
+        const int FREE = -1;    // index is free, terminate probing when looking for an item
+        const int DELETED = -2; // mark index with this to indicate a value WAS at this index, and continue probing when looking for an item
         int[] indexes;
         int[] hashCodes;
         T[] values;
@@ -18,9 +21,10 @@ namespace BusterWood.Collections
 
         public UniqueList(IEqualityComparer<T> equality = null)
         {
-            indexes = new int[4];
-            hashCodes = new int[4];
-            values = new T[4];
+            const int InitialSize = 3;
+            indexes = new int[InitialSize];
+            hashCodes = new int[InitialSize];
+            values = new T[InitialSize];
             count = 0;
             Equality = equality ?? EqualityComparer<T>.Default;
         }
@@ -28,6 +32,8 @@ namespace BusterWood.Collections
         public IEqualityComparer<T> Equality { get; }
 
         public int Count => count;
+
+        public bool IsReadOnly => false;
 
         public T this[int index]
         {
@@ -37,31 +43,63 @@ namespace BusterWood.Collections
                     throw new IndexOutOfRangeException();
                 return values[index];
             }
+            set
+            {
+                //TODO: remove and add with value and hashcode slot reuses
+                throw new NotImplementedException();
+            }
         }
 
+        void ICollection<T>.Add(T item)
+        {
+            Add(item);
+        }
+
+        // inline the code from FindSlot to optimize performance
         public bool Add(T item)
         {
             if (item == null)
                 throw new ArgumentNullException();
 
-            int slot;
             var hc = PositiveHashCode(item);
-            if (FindSlot(item, hc, out slot))
-                return false; // already in list
+            var firstSlot = hc % indexes.Length;
+            int slot = firstSlot;
+            int reuseThis = DELETED;
+            for (;;)
+            {
+                int valueIdx = indexes[slot] - 1; // default value is 0, so always store one more than a real index
+                if (valueIdx < 0)
+                {
+                    // not found, add it now
+                    if (valueIdx == FREE)
+                    {
+                        values[count] = item;
+                        hashCodes[count] = hc;
+                        indexes[reuseThis < 0 ? slot : reuseThis] = ++count; // add one on here, taken off above
+                        return true;
+                    }
 
-            // if the list is full then resize
-            if (slot < 0)
-            {                
-                Resize();
-                FindSlot(item, hc, out slot);
+                    // remember first slot we can reuse due to deletion
+                    if (reuseThis == DELETED)
+                        reuseThis = valueIdx;
+                }
+
+                // return if item already there
+                if (hc == hashCodes[valueIdx] && Equality.Equals(item, values[valueIdx]))
+                    return false; 
+
+                // another value is in that slot, try the next index
+                slot += 1;
+                if (slot == indexes.Length)
+                    slot = 0;
+
+                // searched all possible entries and returned back to original slot, must be full, so resize
+                if (slot == firstSlot)
+                {
+                    Resize();
+                    slot = hc % indexes.Length;
+                }
             }
-
-            // not found, add it
-            Debug.Assert(slot >= 0);
-            values[count] = item;
-            hashCodes[count] = hc;
-            indexes[slot] = ++count; // add one on here, taken off by FindSlot
-            return true;
         }
 
         static int PositiveHashCode(T item) => item.GetHashCode() & Lower31BitMask;
@@ -73,8 +111,8 @@ namespace BusterWood.Collections
             for (;;)
             {
                 int valueIdx = indexes[slot] - 1; // default value is 0, so always store one more than a real index
-                if (valueIdx < 0)
-                    return false; // not found and slot is index it can be added at
+                if (valueIdx == FREE)
+                    return false; 
 
                 if (hc == hashCodes[valueIdx] && Equality.Equals(item, values[valueIdx]))
                     return true; // found
@@ -95,7 +133,7 @@ namespace BusterWood.Collections
 
         void Resize()
         {
-            int newSize = (indexes.Length * 2) + 1;
+            int newSize = (indexes.Length * 2);
             Array.Resize(ref hashCodes, newSize);
             Array.Resize(ref values, newSize);
             
@@ -158,5 +196,78 @@ namespace BusterWood.Collections
         }
 
         IEnumerator IEnumerable.GetEnumerator() => GetEnumerator();
+
+        // AddRange
+        public void UnionWith(IEnumerable<T> other)
+        {
+            foreach (var item in other)
+                Add(item);
+        }
+
+        // in this AND other
+        public void IntersectWith(IEnumerable<T> other)
+        {
+            var notInBoth = other.ToList(x => !Contains(x));
+            ExceptWith(notInBoth);
+        }
+
+        // RemoveRange
+        public void ExceptWith(IEnumerable<T> other)
+        {
+            foreach (var item in other)
+                Remove(item);
+        }
+
+        // NOT in either this or other
+        public void SymmetricExceptWith(IEnumerable<T> other)
+        {
+            var inBoth = other.ToList(x => Contains(x));
+            ExceptWith(inBoth);
+        }
+
+        public bool IsSubsetOf(IEnumerable<T> other) => SetExtensions.IsSubsetOf(this, other);
+
+        public bool IsSupersetOf(IEnumerable<T> other) => SetExtensions.IsSupersetOf(this, other);
+
+        public bool IsProperSupersetOf(IEnumerable<T> other) => SetExtensions.IsProperSupersetOf(this, other);
+
+        public bool IsProperSubsetOf(IEnumerable<T> other) => SetExtensions.IsProperSubsetOf(this, other);
+
+        public bool Overlaps(IEnumerable<T> other) => SetExtensions.Overlaps(this, other);
+
+        public bool SetEquals(IEnumerable<T> other) => SetExtensions.SetEquals(this, other);
+
+        public void Clear()
+        {
+            Array.Clear(indexes, 0, indexes.Length);
+            Array.Clear(hashCodes, 0, count);
+            Array.Clear(values, 0, count);
+            count = 0;
+        }
+
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            int toCopy = Math.Min(count, array.Length - arrayIndex);
+            Array.Copy(values, 0, array, arrayIndex, toCopy);
+        }
+
+        public void Insert(int index, T item)
+        {
+            throw new NotImplementedException();
+        }
+
+        public bool Remove(T item)
+        {
+            var idx = IndexOf(item);
+            var found = idx >= 0;
+            if (found)
+                RemoveAt(idx);
+            return found;
+        }
+
+        public void RemoveAt(int index)
+        {
+            throw new NotImplementedException();
+        }
     }
 }
