@@ -146,7 +146,7 @@ namespace BusterWood.Collections
         {
             // we want 25% free space in indexes array to keep hashing efficient,
             // but hashcodes and values arrays can be smaller than the indexes array
-            // For example, if the list contains 10 items then the sizing could be:
+            // For example, to contain 100 items:
             // values = new T[100];
             // hashcodes = new int[100];
             // indexes = new int[100 * 1.25 = 125];
