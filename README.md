@@ -5,10 +5,10 @@ More linq style extensions methods.
 
 `UniqueList` is a generic collection that:
 * does not contain nulls
-* only contains unqiue values
-* is ordered, i.e. enumeration returns items in the order they were added
-
-`UniqueList` is a mixture of an array-list of values and a hash set, and implements both `IList<T>` and `ISet<T>`.
+* only contains unique values
+* implements `ISet<T>` and has hash table like performance for `Contains` and `IndexOf` operations
+* implements `IList<T>` and gives constant time access to items via index
+* stores values in an array, so enumeration yields items in list order, i.e. *in the order they were added*
 
 The design of `UniqueList` was inspired by [Python 3.6's new dict ](https://mail.python.org/pipermail/python-dev/2012-December/123028.html) which uses hashcode to access an array of indexes into the values array of values.
 
