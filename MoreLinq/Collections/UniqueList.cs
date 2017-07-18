@@ -181,8 +181,7 @@ namespace BusterWood.Collections
                     slot = 0;
 
                 // searched all possible entries and returned back to original slot, must be full, so resize
-                if (slot == firstSlot)
-                    throw new InvalidOperationException("all slots are full after resizing, this should not happen!");
+                Debug.Assert(slot != firstSlot, "all slots are full after resizing, this should not happen!");
             }
         }
 

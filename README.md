@@ -21,17 +21,17 @@ Frequency=1754521 Hz, Resolution=569.9561 ns, Timer=TSC
   DefaultJob : Clr 4.0.30319.42000, 64bit RyuJIT-v4.7.2101.1
 
 
-     Method | Size |        Mean |      Error |     StdDev |
------------ |----- |------------:|-----------:|-----------:|
- UniqueList |   50 |    28.93 us |  0.5756 us |  0.5103 us |
-  ArrayList |   50 |    21.53 us |  0.4255 us |  0.4553 us |
-    HashSet |   50 |    27.73 us |  0.4608 us |  0.4085 us |
- UniqueList |  500 |   320.39 us |  6.1743 us |  5.7755 us |
-  ArrayList |  500 |   219.66 us |  3.8685 us |  3.6186 us |
-    HashSet |  500 |   298.25 us |  5.9494 us | 10.1026 us |
- UniqueList | 5000 | 3,202.48 us | 60.7205 us | 56.7980 us |
-  ArrayList | 5000 | 2,418.89 us | 49.0234 us | 48.1475 us |
-    HashSet | 5000 | 4,963.08 us | 78.7155 us | 65.7310 us |
+     Method | Size |        Mean |       Error |      StdDev |
+----------- |----- |------------:|------------:|------------:|
+  ArrayList |   50 |    22.06 us |   0.4055 us |   0.3793 us |
+ UniqueList |   50 |    29.79 us |   0.5882 us |   0.5777 us |
+    HashSet |   50 |    28.81 us |   0.5722 us |   0.5353 us |
+  ArrayList |  500 |   234.22 us |   4.6396 us |   5.6979 us |
+ UniqueList |  500 |   327.05 us |   6.4500 us |  11.1260 us |
+    HashSet |  500 |   304.02 us |   5.9085 us |   9.3715 us |
+  ArrayList | 5000 | 2,478.81 us |  56.2821 us |  64.8145 us |
+ UniqueList | 5000 | 3,350.63 us |  70.5560 us |  58.9174 us |
+    HashSet | 5000 | 5,107.88 us | 100.1957 us | 143.6977 us |
 ```
 
 
