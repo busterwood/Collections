@@ -23,7 +23,7 @@ namespace BusterWood.Collections
         public UniqueList(IEqualityComparer<T> equality = null)
         {
             const int InitialSize = 3;
-            indexes = new int[InitialSize];
+            indexes = new int[InitialSize+1];
             hashCodes = new int[InitialSize];
             values = new T[InitialSize];
             count = 0;
@@ -140,16 +140,22 @@ namespace BusterWood.Collections
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        bool NeedToResize() => count + 1 >= values.Length * 0.75f;
+        bool NeedToResize() => count + 1 >= values.Length;
 
         void Resize()
         {
+            // we want 25% free space in indexes array to keep hashing efficient,
+            // but hashcodes and values arrays can be smaller than the indexes array
+            // For example, if the list contains 10 items then the sizing could be:
+            // values = new T[100];
+            // hashcodes = new int[100];
+            // indexes = new int[100 * 1.25 = 125];
             int newSize = (indexes.Length * 2) + 1;
-            Array.Resize(ref hashCodes, newSize);
+            Array.Resize(ref hashCodes, newSize); 
             Array.Resize(ref values, newSize);
 
             // recreate indexes from existing values and hashcodes
-            indexes = new int[newSize];
+            indexes = new int[(int)(newSize * 1.25f)];
             for (int i = 0; i < values.Length; i++)
             {
                 if (i == count) break;
@@ -250,8 +256,9 @@ namespace BusterWood.Collections
             int i = 0;
             foreach (var v in values)
             {
-                if (i++ > count) yield break;
+                if (i == count) yield break;
                 yield return v;
+                i++;
             }
         }
 

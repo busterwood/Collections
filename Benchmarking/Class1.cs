@@ -14,8 +14,8 @@ namespace Benchmarking
     {
         public static void Main(string[] args)
         {
-            BenchmarkRunner.Run<IntLists>();
-            //BenchmarkRunner.Run<StringLists>();
+            //BenchmarkRunner.Run<IntLists>();
+            BenchmarkRunner.Run<StringLists>();
             //BenchmarkRunner.Run<UniqueList<int>>();
         }
     }
@@ -57,7 +57,7 @@ namespace Benchmarking
 
     public class StringLists
     {
-        [Params(10, 50, 500, 5000)]
+        [Params(50, 500, 5000)]
         public int Size { get; set; }
 
         [Benchmark]
