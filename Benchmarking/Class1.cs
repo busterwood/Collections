@@ -15,8 +15,9 @@ namespace Benchmarking
         public static void Main(string[] args)
         {
             //BenchmarkRunner.Run<IntLists>();
-            BenchmarkRunner.Run<StringLists>();
+            //BenchmarkRunner.Run<StringLists>();
             //BenchmarkRunner.Run<UniqueList<int>>();
+            BenchmarkRunner.Run<ContainsStringLists>();
         }
     }
 
@@ -87,4 +88,68 @@ namespace Benchmarking
             return l;
         }
     }
+
+    public class ContainsStringLists
+    {
+        private int _size;
+
+        [Params(50, 500, 5000)]
+        public int Size
+        {
+            get { return _size; }
+            set
+            {
+                _size = value;
+            }
+        }
+
+        [GlobalSetup]
+        public void Setup()
+        {
+            ul = new UniqueList<string>();
+            for (int i = 0; i < Size; i++)
+                ul.Add(i + "abv");
+
+            l = new List<string>();
+            for (int i = 0; i < Size; i++)
+                l.Add(i + "abv");
+
+            hs = new HashSet<string>();
+            for (int i = 0; i < Size; i++)
+                hs.Add(i + "abv");
+        }
+
+        UniqueList<string> ul;
+        List<string> l;
+        HashSet<string> hs;
+
+        [Benchmark]
+        public bool UniqueList()
+        {
+            bool c = true;
+            for (int i = 0; i < Size; i++)
+                c = c | ul.Contains(i + "abv");
+            return c;
+        }
+
+        [Benchmark]
+        public bool ArrayList()
+        {
+            bool c = true;
+            for (int i = 0; i < Size; i++)
+                c = c | l.Contains(i + "abv");
+            return c;
+        }
+
+        [Benchmark]
+        public bool HashSet()
+        {
+            bool c = true;
+            for (int i = 0; i < Size; i++)
+                c = c | hs.Contains(i + "abv");
+            return c;
+
+        }
+    }
+
 }
