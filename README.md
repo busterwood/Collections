@@ -39,6 +39,7 @@ Frequency=1754521 Hz, Resolution=569.9561 ns, Timer=TSC
 
 `Contains` performance is similar to a `HashSet<T>` and *much* faster than `List<T>`, for example lookup up all the strings in a list or set of different sizes:
 
+```
 BenchmarkDotNet=v0.10.8, OS=Windows 10 Redstone 1 (10.0.14393)
 Processor=AMD A4-6210 APU with AMD Radeon R3 Graphics, ProcessorCount=4
 Frequency=1754521 Hz, Resolution=569.9561 ns, Timer=TSC
@@ -57,6 +58,7 @@ Frequency=1754521 Hz, Resolution=569.9561 ns, Timer=TSC
  UniqueList | 5000 |   2,716.73 us |    52.8352 us |    56.5331 us |
   ArrayList | 5000 | 350,595.46 us | 6,076.2343 us | 5,386.4229 us |
     HashSet | 5000 |   2,750.42 us |    16.3910 us |    11.8517 us |
+```
 
 ## Memory usage
 
