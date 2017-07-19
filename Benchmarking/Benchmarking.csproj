@@ -187,9 +187,9 @@
     <Content Include="TraceEvent.ReleaseNotes.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\MoreLinq\MoreLinq.csproj">
+    <ProjectReference Include="..\Collections\BusterWood.Collections.csproj">
       <Project>{9ac12c73-0cf7-4550-b95b-4b9ac6a5486a}</Project>
-      <Name>MoreLinq</Name>
+      <Name>BusterWood.Collections</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

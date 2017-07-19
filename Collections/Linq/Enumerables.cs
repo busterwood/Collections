@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace BusterWood.MoreLinq
+namespace BusterWood.Linq
 {
     public static class Enumerables
     {

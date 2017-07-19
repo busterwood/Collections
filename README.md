@@ -1,7 +1,6 @@
-# MoreLinq
-More linq style extensions methods.
+# BusterWood.Collections
 
-# UniqueList<T>
+## UniqueList<T>
 
 `UniqueList` is a generic collection that:
 * does not contain nulls
@@ -12,7 +11,7 @@ More linq style extensions methods.
 
 The design of `UniqueList` was inspired by [Python 3.6's new dict ](https://mail.python.org/pipermail/python-dev/2012-December/123028.html) which uses hashcode to access an array of indexes into the values array of values.
 
-## Add Performance
+### Add Performance
 
 `Add` performance is similar to a adding to a `HashSet<T>` and not that much slower than `List<T>`, for example adding a number strings:
 ```
@@ -35,7 +34,7 @@ Frequency=1754521 Hz, Resolution=569.9561 ns, Timer=TSC
   ArrayList | 5000 | 2,478.81 us |  56.2821 us |  64.8145 us |
     HashSet | 5000 | 5,107.88 us | 100.1957 us | 143.6977 us |
 ```
-## Contains / IndexOf performance
+### Contains / IndexOf performance
 
 `Contains` performance is similar to a `HashSet<T>` and *much* faster than `List<T>`, for example lookup up all the strings in a list or set of different sizes:
 
@@ -60,7 +59,7 @@ Frequency=1754521 Hz, Resolution=569.9561 ns, Timer=TSC
     HashSet | 5000 |   2,750.42 us |    16.3910 us |    11.8517 us |
 ```
 
-## Memory usage
+### Memory usage
 
 In comparision to a `List<T>` on a x64 system:
 
@@ -74,8 +73,3 @@ ArrayList      | 500  |       4.5 K |
 UniqueList     | 5000 |       139 K |
 ArrayList      | 5000 |        73 K |
 ```
-
-### Ideas
-
-Null == empty set
-Value == set of one

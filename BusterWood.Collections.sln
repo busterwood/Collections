@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26430.14
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MoreLinq", "MoreLinq\MoreLinq.csproj", "{9AC12C73-0CF7-4550-B95B-4B9AC6A5486A}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BusterWood.Collections", "Collections\BusterWood.Collections.csproj", "{9AC12C73-0CF7-4550-B95B-4B9AC6A5486A}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTests", "UnitTests\UnitTests.csproj", "{5894A15A-BBF5-4003-90F8-5C984064D664}"
 EndProject

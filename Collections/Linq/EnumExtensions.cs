@@ -1,6 +1,6 @@
 ﻿using System.Linq;
 
-namespace BusterWood.MoreLinq
+namespace BusterWood.Linq
 {
     public static class EnumExtensions
     {

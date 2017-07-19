@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 
-namespace BusterWood.MoreLinq
+namespace BusterWood.Linq
 {
     public static class TextExtensions
     {
