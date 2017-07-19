@@ -9,10 +9,11 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>Benchmarking</RootNamespace>
     <AssemblyName>Benchmarking</AssemblyName>
-    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <NuGetPackageImportStamp>
     </NuGetPackageImportStamp>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -187,8 +188,8 @@
     <Content Include="TraceEvent.ReleaseNotes.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Collections\BusterWood.Collections.csproj">
-      <Project>{9ac12c73-0cf7-4550-b95b-4b9ac6a5486a}</Project>
+    <ProjectReference Include="..\BusterWood.Collections\BusterWood.Collections.csproj">
+      <Project>{36a7250b-efbf-4e10-968f-d684d071d918}</Project>
       <Name>BusterWood.Collections</Name>
     </ProjectReference>
   </ItemGroup>
