@@ -68,11 +68,11 @@ Data structure | Size | Memory Held |
 -------------- |----- |------------ |  
 UniqueList     | 50   |       1.0 K |
  ArrayList     | 50   |       0.6 K |
-   HashSet     | 50   |       1.1 K |
+   HashSet     | 50   |       1.7 K |
 UniqueList     | 500  |       8.6 K |
  ArrayList     | 500  |       4.5 K |
-   HashSet     | 500  |      10.4 K |
+   HashSet     | 500  |      18.3 K |
 UniqueList     | 5000 |       139 K |
  ArrayList     | 5000 |        73 K |
-   HashSet     | 5000 |       116 K |
+   HashSet     | 5000 |       168 K |
 ```
