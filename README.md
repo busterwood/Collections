@@ -61,15 +61,18 @@ Frequency=1754521 Hz, Resolution=569.9561 ns, Timer=TSC
 
 ### Memory usage
 
-In comparision to a `List<T>` on a x64 system:
+In comparision to a `List<T>` on a x64 system, where T is `string`:
 
 ```
 Data structure | Size | Memory Held |
 -------------- |----- |------------ |  
 UniqueList     | 50   |       1.0 K |
-ArrayList      | 50   |       0.6 K |
-UniqueList     | 500  |       8.5 K |
-ArrayList      | 500  |       4.5 K |
+ ArrayList     | 50   |       0.6 K |
+   HashSet     | 50   |       1.1 K |
+UniqueList     | 500  |       8.6 K |
+ ArrayList     | 500  |       4.5 K |
+   HashSet     | 500  |      10.4 K |
 UniqueList     | 5000 |       139 K |
-ArrayList      | 5000 |        73 K |
+ ArrayList     | 5000 |        73 K |
+   HashSet     | 5000 |       116 K |
 ```
