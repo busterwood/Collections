@@ -4,4 +4,6 @@
     <TargetFrameworks>netstandard1.4;net462</TargetFrameworks>
   </PropertyGroup>
 
+  <Import Project="..\Shared.BusterWood.Collections\Shared.BusterWood.Collections.projitems" Label="Shared" />
+
 </Project>
