@@ -6,7 +6,12 @@ using System.Text;
 
 namespace BusterWood.Linq
 {
-    public static class TextExtensions
+#if UNIQUELIST_INTERNAL
+    internal
+#else
+    public
+#endif
+    static class TextExtensions
     {
         public static bool IsLetter(this char c) => char.IsLetter(c);
         public static bool IsWhiteSpace(this char c) => char.IsWhiteSpace(c);

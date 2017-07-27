@@ -3,8 +3,12 @@ using System.Linq;
 
 namespace BusterWood.Collections
 {
-
-    public static class SetExtensions
+#if UNIQUELIST_INTERNAL
+    internal
+#else
+    public
+#endif
+    static class SetExtensions
     {
         public static bool IsProperSubsetOf<S, T>(this S set, IEnumerable<T> other) where S : IReadOnlySet<T> => set.IsSubsetOf(other) && other.Any(x => !set.Contains(x));
 
@@ -18,5 +22,17 @@ namespace BusterWood.Collections
 
         public static bool SetEquals<S, T>(this S set, IEnumerable<T> other) where S : IReadOnlySet<T> => set.IsSubsetOf(other) && set.IsSupersetOf(other);
 
+        public static UniqueList<T> ToUniqueList<T>(this IEnumerable<T> items, IEqualityComparer<T> equality = null)
+        {
+            equality  = equality ?? EqualityComparer<T>.Default;
+            var ul = items as UniqueList<T>;
+            if (ul != null && ul.Equality == equality)
+                return ul.Copy();
+            
+            var result = new UniqueList<T>(equality);
+            foreach (var item in items)
+                result.Add(item);
+            return result;
+        }
     }
 }

@@ -4,7 +4,12 @@ using System.Linq;
 
 namespace BusterWood.Linq
 {
-    public static class Enumerables
+#if UNIQUELIST_INTERNAL
+    internal
+#else
+    public
+#endif
+    static class Enumerables
     {
         public static List<T> ToList<T>(this IEnumerable<T> source, Func<T, bool> predicate)
         {
@@ -127,7 +132,11 @@ namespace BusterWood.Linq
         public static IEnumerable<TResult> Choose<T, TResult>(this IEnumerable<T> items, Func<T, TResult?> chooser) where TResult : struct
             => items.Select(chooser).Where(res => res.HasValue).Select(res => res.Value);
 
-    }
-
-    
+        public static T[] Copy<T>(this T[] source)
+        {
+            var result = new T[source.Length];
+            source.CopyTo(result, 0);
+            return result;
+        }
+    }    
 }

@@ -2,7 +2,12 @@
 
 namespace BusterWood.Collections
 {
-    public interface IReadOnlySet<T> : IReadOnlyCollection<T>
+#if UNIQUELIST_INTERNAL
+    internal
+#else
+    public
+#endif
+    interface IReadOnlySet<T> : IReadOnlyCollection<T>
     {
         bool Contains(T item);
         IEqualityComparer<T> Equality { get; }

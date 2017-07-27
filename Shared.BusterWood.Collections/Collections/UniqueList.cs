@@ -10,7 +10,12 @@ namespace BusterWood.Collections
 {
     /// <summary>List of unique elements, which acts like a set in that you cannot add duplicates.</summary>
     /// <remarks>Performance is comparable to <see cref="HashSet{T}"/>.  Design was inspired by Python's 3.6 new dict</remarks>
-    public class UniqueList<T> : IReadOnlyList<T>, ISet<T>, IReadOnlySet<T>, IList<T>
+#if UNIQUELIST_INTERNAL
+    internal
+#else
+    public
+#endif
+    class UniqueList<T> : IReadOnlyList<T>, ISet<T>, IReadOnlySet<T>, IList<T>
     {
         const int Lower31BitMask = 0x7FFFFFFF;
         const int FREE = -1;    // index is free, terminate probing when looking for an item
@@ -19,6 +24,17 @@ namespace BusterWood.Collections
         int[] hashCodes;
         T[] values;
         int count;
+
+        public UniqueList(UniqueList<T> other)
+        {
+            if (other == null)
+                throw new ArgumentNullException(nameof(other));
+            indexes = other.indexes.Copy();
+            hashCodes = other.hashCodes.Copy();
+            values = other.values.Copy();
+            count = other.count;
+            Equality = other.Equality;
+        }
 
         public UniqueList(IEqualityComparer<T> equality = null)
         {
@@ -87,7 +103,7 @@ namespace BusterWood.Collections
         public bool Add(T item)
         {
             if (item == null)
-                throw new ArgumentNullException();
+                return false; // dont allow null to be added, just say it is already there
 
             if (NeedToResize())
                 Resize();
@@ -359,5 +375,7 @@ namespace BusterWood.Collections
             var item  = this[index];
             Remove(item);
         }
+
+        public UniqueList<T> Copy() => new UniqueList<T>(this);
     }
 }
