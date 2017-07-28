@@ -40,6 +40,9 @@
     <Reference Include="Microsoft.CSharp" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChooseTests.cs" />
+    <Compile Include="ForTests.cs" />
+    <Compile Include="InTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="UniqueListTests.cs" />
   </ItemGroup>
