@@ -25,6 +25,21 @@ namespace UnitTests
         }
 
         [Test]
+        public void adding_a_null_returns_false()
+        {
+            var set = new UniqueList<string>();
+            Assert.AreEqual(false, set.Add(null));
+        }
+
+        [Test]
+        public void adding_a_null_does_not_increase_the_collection_count()
+        {
+            var set = new UniqueList<string>();
+            set.Add(null);
+            Assert.AreEqual(0, set.Count);
+        }
+
+        [Test]
         public void cannot_add_duplicate_values()
         {
             var set = new UniqueList<int>();
