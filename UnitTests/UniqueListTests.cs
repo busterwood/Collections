@@ -17,6 +17,33 @@ namespace UnitTests
         }
 
         [Test]
+        public void adding_an_nullable_struct_with_null_value_returns_false()
+        {
+            var set = new UniqueList<int>();
+            int? val = null;
+            Assert.AreEqual(false, set.Add(val), "set.Add(null)");
+            Assert.AreEqual(0, set.Count, "set.Count");
+        }
+
+        [Test]
+        public void adding_an_nullable_struct_with_value_returns_false_when_item_already_in_set()
+        {
+            var set = new UniqueList<int>() { 1 };
+            int? val = 1;
+            Assert.AreEqual(false, set.Add(val), "set.Add(null)");
+            Assert.AreEqual(1, set.Count, "set.Count");
+        }
+
+        [Test]
+        public void adding_an_nullable_struct_with_value_returns_true_when_item_not_in_set()
+        {
+            var set = new UniqueList<int> { 1 };
+            int? val = 2;
+            Assert.AreEqual(true, set.Add(val), "set.Add(null)");
+            Assert.AreEqual(2, set.Count, "set.Count");
+        }
+
+        [Test]
         public void can_add_unique_strings()
         {
             var set = new UniqueList<string>();

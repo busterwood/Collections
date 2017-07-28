@@ -34,5 +34,10 @@ namespace BusterWood.Collections
                 result.Add(item);
             return result;
         }
+
+        public static bool Add<T>(this ISet<T> set, T? item) where T : struct
+        {
+            return item.HasValue ? set.Add(item.Value) : false;
+        }
     }
 }
