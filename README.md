@@ -60,7 +60,7 @@ Frequency=1754521 Hz, Resolution=569.9561 ns, Timer=TSC
 
 ### Memory usage
 
-In comparision to a `List<T>` on a x64 system, where T is `string`:
+`UniqueList<T>` uses more memory than `List<T>` but less than `HashSet<T>`, for example on a x64 system, where T is `string`:
 
 ```
 Data structure | Size | Memory Held |
