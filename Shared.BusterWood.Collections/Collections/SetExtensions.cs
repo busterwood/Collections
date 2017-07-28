@@ -22,6 +22,7 @@ namespace BusterWood.Collections
 
         public static bool SetEquals<S, T>(this S set, IEnumerable<T> other) where S : IReadOnlySet<T> => set.IsSubsetOf(other) && set.IsSupersetOf(other);
 
+        /// <summary>Returns a <see cref="UniqueList{T}"/> of values from <paramref name="items"/>.</summary>
         public static UniqueList<T> ToUniqueList<T>(this IEnumerable<T> items, IEqualityComparer<T> equality = null)
         {
             equality  = equality ?? EqualityComparer<T>.Default;
@@ -35,9 +36,13 @@ namespace BusterWood.Collections
             return result;
         }
 
-        public static bool Add<T>(this ISet<T> set, T? item) where T : struct
-        {
-            return item.HasValue ? set.Add(item.Value) : false;
-        }
+        /// <summary>Adds <paramref name="item"/> to the set.  Returns FALSE if <paramref name="item"/> is null</summary>
+        public static bool Add<T>(this ISet<T> set, T? item) where T : struct => item.HasValue ? set.Add(item.Value) : false;
+
+        /// <summary>Adds <paramref name="item"/> to the set.  Returns FALSE if <paramref name="item"/> is null</summary>
+        public static bool Union<T>(this ISet<T> set, T? item) where T : struct => set.Add(item);
+
+        /// <summary>Adds <paramref name="item"/> to the set.  Returns FALSE if <paramref name="item"/> is null</summary>
+        public static bool Union<T>(this ISet<T> set, T item) => item != null ? set.Add(item) : false;
     }
 }
