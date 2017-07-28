@@ -2,12 +2,11 @@
 
 ## UniqueList<T>
 
-`UniqueList` is a generic collection that:
-* does not contain nulls
-* only contains unique values
+`UniqueList` is a generic collection that is both a set and a list:
 * implements `ISet<T>` and has hash table like performance for `Contains` and `IndexOf` operations
 * implements `IList<T>` and gives constant time access to items via index
 * stores values in an array, so enumeration yields items in list order, i.e. *in the order they were added*
+* does not allow null to be added - calling `Add()` with a null values always returns TRUE
 
 The design of `UniqueList` was inspired by [Python 3.6's new dict ](https://mail.python.org/pipermail/python-dev/2012-December/123028.html) which uses hashcode to access an array of indexes into the values array of values.
 
