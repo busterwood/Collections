@@ -252,8 +252,21 @@ namespace BusterWood.Collections
             }
         }
 
+        public void AddOrUpdate(T item)
+        {
+            if (item == null)
+                return; // dont allow null to be added, considered as this.union(empty set)
+
+            int index = IndexOf(item);
+            if (index < 0)
+                Add(item);
+            else
+                this[index] = item;
+        }
+
         public bool Contains(T item)
         {
+            if (item == null) return false;
             var hc = PositiveHashCode(item);
             var result = FindSlot(item, hc);
             return result.Found;
@@ -261,6 +274,7 @@ namespace BusterWood.Collections
 
         public int IndexOf(T item)
         {
+            if (item == null) return -1;
             var hc = PositiveHashCode(item);
             var result = FindSlot(item, hc);
             return result.Found ? GetIndex(result.Slot) : -1;
@@ -329,6 +343,7 @@ namespace BusterWood.Collections
 
         public void CopyTo(T[] array, int arrayIndex)
         {
+            if (array == null) throw new ArgumentNullException(nameof(array));
             int toCopy = Math.Min(count, array.Length - arrayIndex);
             Array.Copy(values, 0, array, arrayIndex, toCopy);
         }
