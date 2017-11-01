@@ -10,6 +10,8 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)Collections\IReadOnlySet.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\Lookup .cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Collections\UniqueLookup.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\SetExtensions.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Collections\UniqueList.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Linq\Enumerables.cs" />
