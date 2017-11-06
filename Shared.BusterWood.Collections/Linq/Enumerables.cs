@@ -138,5 +138,10 @@ namespace BusterWood.Linq
             source.CopyTo(result, 0);
             return result;
         }
+
+        public static TValue GetValueOrDefault<TKey, TValue>(this IReadOnlyDictionary<TKey, TValue> dic, TKey key, TValue @default = default(T))
+        {
+            return dic.TryGetValue(key, out var value) ? value : @default;
+        }
     }    
 }

@@ -49,6 +49,12 @@ namespace BusterWood.Collections
             }
         }
 
+        public static UniqueList<TValue> GetValueOrDefault<TKey, TValue>(TKey key, TValue @default = default(T))
+        {
+            return _map.TryGetValue(key, out var list) ? list : @default;
+        }
+
+
         public bool RemoveAll(TKey key) => _map.Remove(key);
 
         public bool Remove(TKey key, TValue value) => _map.TryGetValue(key, out var list) ? list.Remove(value) : false;
